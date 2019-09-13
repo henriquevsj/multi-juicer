@@ -8,6 +8,7 @@ const app = express();
 const teamRoutes = require('./teams/teams');
 const adminRoutes = require('./admin/admin');
 const proxyRoutes = require('./proxy/proxy');
+const scoreboardRoutes = require('./scoreboard/scoreboard');
 
 app.use(cookieParser(get('cookieParser.secret')));
 app.use('/balancer', express.json());
@@ -39,6 +40,7 @@ app.use('/balancer', express.static(process.env['NODE_ENV'] === 'test' ? 'ui/bui
 
 app.use('/balancer/teams', teamRoutes);
 app.use('/balancer/admin', adminRoutes);
+app.use('/balancer/scoreboard', scoreboardRoutes);
 
 app.use(proxyRoutes);
 
