@@ -13,6 +13,7 @@ import { Spinner } from './Spinner';
 import { Footer } from './Footer';
 
 const AdminPage = lazy(() => import('./pages/AdminPage'));
+const ScoreboardPage = lazy(() => import('./pages/ScoreboardPage'));
 
 for (const translation of translations) {
   if (translation.key === 'en') {
@@ -51,6 +52,7 @@ function App() {
               <Switch>
                 <Route path="/" exact component={JoinPage} />
                 <Route path="/admin" component={AdminPage} />
+                <Route path="/scoreboard" component={ScoreboardPage} />
                 <Route path="/teams/:team/joining/" component={JoiningPage} />
                 <Route path="/teams/:team/joined/" component={JoinedPage} />
               </Switch>

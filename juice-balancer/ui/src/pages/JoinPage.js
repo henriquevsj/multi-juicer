@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import { BodyCard, H2, Label, Input, Form, Button } from '../Components';
@@ -82,6 +82,10 @@ export const JoinPage = injectIntl(
               strong: msg => <strong>{msg}</strong>,
             }}
           />
+
+          <Link to={`/scoreboard`} activeClassName="active">
+            Go to scoreboard
+          </Link>
 
           {failed ? (
             <p>

@@ -141,6 +141,18 @@ async function checkIfMaxJuiceShopInstancesIsReached(req, res, next) {
 /**
  * @param {import("express").Request} req
  * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ */
+async function pushNewTeamToTeamlist(req, res, next) {
+  const { team } = req.params;
+  await redis.rpush('teams', team);
+
+  next();
+}
+
+/**
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
  */
 async function createTeam(req, res) {
   const { team } = req.params;
@@ -240,6 +252,7 @@ router.post(
   interceptAdminLogin,
   checkIfTeamAlreadyExists,
   checkIfMaxJuiceShopInstancesIsReached,
+  pushNewTeamToTeamlist,
   createTeam
 );
 
