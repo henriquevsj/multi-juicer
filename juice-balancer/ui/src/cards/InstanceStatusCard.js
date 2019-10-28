@@ -39,7 +39,7 @@ export const InstanceStatusCard = ({ teamname }) => {
           <span data-test-id="instance-status">
             <FormattedMessage
               id="instance_status_ready"
-              defaultMessage="Juice Shop Instance Ready"
+              defaultMessage="Smoothie Shop Instance Ready"
             />
           </span>
         </CenteredText>
@@ -55,7 +55,7 @@ export const InstanceStatusCard = ({ teamname }) => {
         <span data-test-id="instance-status">
           <FormattedMessage
             id="instance_status_starting"
-            defaultMessage="Starting a new Juice Shop Instance"
+            defaultMessage="Starting a new Smoothie Shop Instance"
           />
         </span>
       </CenteredCard>
