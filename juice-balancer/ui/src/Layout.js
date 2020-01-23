@@ -6,7 +6,7 @@ import logo from './logo.svg';
 import { Card, H1 } from './Components';
 
 const Header = styled.div`
-  background-color: #A92183;
+  background-color: #a92183;
   min-height: 128px;
   display: flex;
   justify-content: center;

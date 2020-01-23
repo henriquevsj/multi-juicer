@@ -7,7 +7,17 @@ const k8sCoreApi = kc.makeApiClient(CoreV1Api);
 
 const { get } = require('./config');
 
-const createDeploymentForTeam = ({ team }) =>
+const lodashGet = require('lodash/get');
+const once = require('lodash/once');
+
+// Gets the Deployment uid for the JuiceBalancer
+// This is required to set the JuiceBalancer as owner of the created JuiceShop Instances
+const getJuiceBalancerDeploymentUid = once(async () => {
+  const deployment = await k8sAppsApi.readNamespacedDeployment('juice-balancer', get('namespace'));
+  return lodashGet(deployment, ['body', 'metadata', 'uid'], null);
+});
+
+const createDeploymentForTeam = async ({ team }) =>
   k8sAppsApi
     .createNamespacedDeployment(get('namespace'), {
       metadata: {
@@ -17,6 +27,16 @@ const createDeploymentForTeam = ({ team }) =>
           team,
           'deployment-context': get('deploymentContext'),
         },
+        ownerReferences: [
+          {
+            apiVersion: 'apps/v1',
+            blockOwnerDeletion: true,
+            controller: true,
+            kind: 'Deployment',
+            name: 'juice-balancer',
+            uid: await getJuiceBalancerDeploymentUid(),
+          },
+        ],
       },
       spec: {
         selector: {
@@ -77,20 +97,21 @@ const createDeploymentForTeam = ({ team }) =>
                 volumeMounts: [
                   {
                     name: 'juice-shop-config',
-                    mountPath: '/juice-shop/config/juicy-ctf.yaml',
-                    subPath: 'juicy-ctf.yaml',
+                    mountPath: '/juice-shop/config/multi-juicer.yaml',
+                    subPath: 'multi-juicer.yaml',
                   },
                 ],
               },
               {
                 name: 'progress-watchdog',
                 image: 'iteratec/juice-progress-watchdog',
+                imagePullPolicy: get('juiceShop.imagePullPolicy'),
                 env: [
                   {
                     name: 'REDIS_PASSWORD',
                     valueFrom: {
                       secretKeyRef: {
-                        name: 'juicy-ctf-redis',
+                        name: 'multi-juicer-redis',
                         key: 'redis-password',
                       },
                     },
@@ -128,7 +149,7 @@ const createDeploymentForTeam = ({ team }) =>
 
 module.exports.createDeploymentForTeam = createDeploymentForTeam;
 
-const createServiceForTeam = teamname =>
+const createServiceForTeam = async teamname =>
   k8sCoreApi
     .createNamespacedService(get('namespace'), {
       metadata: {
@@ -138,6 +159,16 @@ const createServiceForTeam = teamname =>
           team: teamname,
           'deployment-context': get('deploymentContext'),
         },
+        ownerReferences: [
+          {
+            apiVersion: 'apps/v1',
+            blockOwnerDeletion: true,
+            controller: true,
+            kind: 'Deployment',
+            name: 'juice-balancer',
+            uid: await getJuiceBalancerDeploymentUid(),
+          },
+        ],
       },
       spec: {
         selector: {
